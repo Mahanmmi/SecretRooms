@@ -3,6 +3,7 @@ package com.wynprice.secretrooms.server.items;
 import com.wynprice.secretrooms.client.world.DummyIWorld;
 import com.wynprice.secretrooms.server.blocks.SecretBaseBlock;
 import com.wynprice.secretrooms.server.data.SecretData;
+import com.wynprice.secretrooms.server.data.SecretItemTags;
 import com.wynprice.secretrooms.server.tileentity.SecretTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.BlockItem;
@@ -25,6 +26,14 @@ class SecretBlockItem extends BlockItem {
         BlockPos offFace = context.replacingClickedOnBlock() ? context.getClickedPos() : context.getClickedPos().relative(context.getClickedFace().getOpposite());
         BlockState placedOnStateRaw = context.getLevel().getBlockState(offFace);
         BlockEntity placedOnTileEntity = context.getLevel().getBlockEntity(offFace);
+
+        if (placedOnStateRaw.is(SecretItemTags.TEXTURE_BLACKLIST)) {
+            return false;
+        }
+        if (placedOnTileEntity != null && placedOnTileEntity.blockState.is(SecretItemTags.TEXTURE_BLACKLIST)) {
+            return false;
+        }
+
         if(placedOnTileEntity instanceof SecretTileEntity) {
             SecretData data = ((SecretTileEntity) placedOnTileEntity).getData();
             placedOnStateRaw = data.getBlockState();
